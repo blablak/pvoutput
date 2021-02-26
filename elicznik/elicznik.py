@@ -9,9 +9,9 @@ from requests.adapters import HTTPAdapter
 import pprint
 
 FORMAT = '[%(asctime)-15s] [%(levelname)s] [%(filename)s %(levelno)s line] %(message)s'
-logger = logging.getLogger(__file__)
+_LOG = logging.getLogger(__file__)
 logging.basicConfig(format=FORMAT)
-logger.setLevel(logging.DEBUG)
+_LOG.setLevel(logging.DEBUG)
 
 
 
@@ -56,17 +56,17 @@ def elicznik(day, username, password, meter_id):
         "dane[checkOZE]": "on"
     }
 
-    logger.debug(chart)
+    _LOG.debug(chart)
     response = session.request("POST", charturl, data=chart, headers=headers)
     # pprint.pprint(response.text)
     json_data = response.json()
-    #pprint.pprint(json_data)
+    pprint.pprint(json_data)
     # show power usage per hours
     return_value = {}
-    logger.debug(json_data["dane"]["chart"])
-    logger.debug(json_data["dane"]["OZE"])
+    _LOG.debug(json_data["dane"]["chart"])
+    _LOG.debug(json_data["dane"]["OZE"])
     for hour in json_data["dane"]["chart"]:
-        logger.debug(f'Hour: {hour:0>2} - {json_data["dane"]["chart"][hour]["EC"]} kWh |  '
+        _LOG.debug(f'Hour: {hour:0>2} - {json_data["dane"]["chart"][hour]["EC"]} kWh |  '
                    f'{json_data["dane"]["OZE"][hour]["EC"]} kWh')
         return_value[f'{hour:0>2}'] = {"used_power": int(float(json_data["dane"]["chart"][hour]["EC"]) * 1000),
                                        "export_power": int(float(json_data["dane"]["OZE"][hour]["EC"]) * 1000),
@@ -75,6 +75,7 @@ def elicznik(day, username, password, meter_id):
                                        }
 
     for weather in json_data["dane"]['weather']:
+        weather = json_data["dane"]['weather'][weather]
         hour = weather['Godzina']
         if hour == '0': continue
         return_value[f'{hour:0>2}']['TemperatureAir'] = weather['TemperatureAir']
@@ -86,7 +87,7 @@ def elicznik(day, username, password, meter_id):
             return_value[f'{hour:0>2}']['Cloudiness'] = weather['Cloudiness']
             return_value[f'{hour:0>2}']['Windspeed'] = weather['Windspeed']
 
-    pprint.pprint(return_value)
+    #pprint.pprint(return_value)
 
     return return_value
 
