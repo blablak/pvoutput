@@ -75,8 +75,8 @@ class mainClass:
         yesterday = now - timedelta(days=1)
         _LOG.debug("Yesterday: " + yesterday.strftime("%Y%m%d"))
 
-        API_KEY = "44fbec43fa3cd73bb4c803451b2010c907a06b97"
-        SYSTEM_ID = 81585
+        API_KEY = ""
+        SYSTEM_ID = 
 
         pv = pvOutput(API_KEY, SYSTEM_ID)
         #print(pv.rate_limit_info())
